@@ -11,8 +11,17 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var myImage: UIImageView!
     @IBOutlet weak var myLogin: UITextField!
-    @IBOutlet weak var myButton: UIButton!
+    @IBOutlet weak var butten: UIButton!
     @IBOutlet weak var myPassword: UITextField!
+    
+    lazy var button: UIButton = {
+        let button = UIButton(configuration: .gray())
+        button.setTitle("Войти", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    let login = "123"
+    let password = "123"
     
     let validCredentials = [
         "123": "123",
@@ -21,23 +30,26 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        myButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        view.addSubview(button)
+        button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)])
+    }
+    
+    func displayAlert(message: String) {
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     @objc func loginButtonTapped() {
-        guard let enteredPassword = validCredentials[myLogin.text ?? ""] else {
-            displayAlert(message: "Неверный логин или пароль")
-            return
+        if login == myLogin.text,
+           password == myPassword.text {
+            performSegue(withIdentifier: "111", sender: self)
+        } else {
+            displayAlert(message: "пароль введен неверно")
         }
         
-        if myPassword.text != enteredPassword {
-            displayAlert(message: "Неверный логин или пароль")
-        }
-        
-        func displayAlert(message: String) {
-            let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
-        }
     }
 }
